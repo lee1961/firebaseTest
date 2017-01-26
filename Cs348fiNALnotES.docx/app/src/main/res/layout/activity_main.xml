@@ -10,27 +10,60 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.firebasetutorial.MainActivity">
 
-    <Button
-        android:text="Click to Change"
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/firebase_btn"
-        android:layout_alignParentBottom="true"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_alignParentTop="true"
+        android:id="@+id/name_field"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="89dp"
-        android:layout_marginBottom="202dp"
-        android:onClick="onSubmit"
-        />
+        android:hint="Enter Your Name..." />
+
+
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
-        android:layout_alignParentTop="true"
-        android:id="@+id/editText"
+        android:layout_marginTop="24dp"
+        android:id="@+id/email_field"
+        android:layout_below="@+id/name_field"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:hint="Your Email..." />
+
+    <Button
+        android:text="Click to Store"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/firebase_btn"
+        android:onClick="onSubmit"
+        android:layout_below="@+id/email_field"
+        android:layout_marginTop="121dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text=""
+        android:hint="Name..."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="82dp"
+        android:id="@+id/name_view"
+        android:textSize="20sp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="switch_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/name_view"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/switch_button" />
 
 </RelativeLayout>
