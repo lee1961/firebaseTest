@@ -1,9 +1,11 @@
 package com.example.firebasetutorial;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,9 +35,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private EditText e;
     private Button switchBtn;
-
+    private EditText mPasswordField;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private ProgressDialog mProgress;
 
     private TextView mNameView;
 
@@ -84,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        mProgress = new ProgressDialog(this);
+
+
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -107,33 +115,17 @@ public class MainActivity extends AppCompatActivity {
 
         mNameField = (EditText) findViewById(R.id.name_field);
         mEmailField = (EditText) findViewById(R.id.email_field);
+        mPasswordField = (EditText) findViewById(R.id.password_field);
 
+
+
+        mAuth = FirebaseAuth.getInstance();
 
 //        editText_2 = (EditText) findViewById(R.id.editText2);
 
 //        mFirebaseBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                // 1 - Create child in root object
-//                // 2 - Assign some value to the child object
-//                String name = mNameField.getText().toString().trim();
-//                String email = mEmailField.getText().toString().trim();
-//
-//                HashMap<String,String> dataMap = new HashMap<String, String>();
-//                dataMap.put("Name",name);
-//                dataMap.put("Email",email);
-//                // the add on complete listener is for giving error if the setValue is not complete
-//
-//                mDatabase.push().setValue(dataMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if(task.isSuccessful()) {
-//                            Toast.makeText(MainActivity.this,"Stored...", Toast.LENGTH_LONG).show();
-//                        } else {
-//                            Toast.makeText(MainActivity.this,"Error...", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
 //
 //               // mDatabase.child("Name").setValue("Victor Lee");
 //            }
@@ -148,32 +140,64 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-
     public void onSubmit(View view) {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        System.out.println(mDatabase.toString());
-        String text1 = mNameField.getText().toString();
-        String text2 = mEmailField.getText().toString();
-        if(text1 != null && text2 != null) {
-           // mDatabase.child("Name").setValue(g);
-            //mDatabase.child("name").setValue(g);
-            Person person = new Person();
-            person.setName(text1);
-            person.setAddress(text2);
-            User_Pass u = new User_Pass(text1,text2);
-            mDatabase.setValue(u);
-            //displayValue(g);
-
-        }
-
-
-
+        startRegister();
     }
+    public void startRegister() {
+        final String name = mNameField.getText().toString().trim();
+        String email = mEmailField.getText().toString().trim();
+        String password = mPasswordField.getText().toString().trim();
+
+        if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users"); // to point at users
+            mProgress.setMessage("Signing up...");
+            mProgress.show();
+            mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()) {
+                        // once successfully signed up
+                        // it is in sign in mode so retrieve id
+                        String user_id = mAuth.getCurrentUser().getUid(); // to get the uniqueid
+                        DatabaseReference current_user_db =  mDatabase.child(user_id);
+                        current_user_db.child("name").setValue(name);
+                        current_user_db.child("image").setValue("default");
+                        mProgress.dismiss();
+                        Intent mainIntent = new Intent(MainActivity.this,RetrieveActivity.class);
+                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(mainIntent );
+                    }
+                }
+            });
+        }
+    }
+
+
+
+//    public void onSubmit(View view) {
+//        mDatabase = FirebaseDatabase.getInstance().getReference();
+//        System.out.println(mDatabase.toString());
+//        String text1 = mNameField.getText().toString();
+//        String text2 = mEmailField.getText().toString();
+//        if(text1 != null && text2 != null) {
+//           // mDatabase.child("Name").setValue(g);
+//            //mDatabase.child("name").setValue(g);
+//            Person person = new Person();
+//            person.setName(text1);
+//            person.setAddress(text2);
+//            User_Pass u = new User_Pass(text1,text2);
+//            mDatabase.setValue(u);
+//            //displayValue(g);
+//
+//        }
+//
+//
+//
+//    }
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+       // mAuth.addAuthStateListener(mAuthListener);
     }
 
 

@@ -35,6 +35,7 @@ public class RetrieveActivity extends AppCompatActivity {
         first_textView = (TextView) findViewById(R.id.textView);
         second_textView = (TextView) findViewById(R.id.textView2);
 
+
         mDatabase = FirebaseDatabase.getInstance().getReference().child("level1").child("level2").child("level3");
 
 
