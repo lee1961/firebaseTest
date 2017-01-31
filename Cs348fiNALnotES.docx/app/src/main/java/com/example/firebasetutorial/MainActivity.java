@@ -16,20 +16,26 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ValueEventListener;
+//import com.google.
 
 import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
-
+    //private FirebaseAuth mAuth;
     private Button mFirebaseBtn;
     private EditText editText;
     private DatabaseReference mDatabase;
     private TextView textView;
     private EditText e;
     private Button switchBtn;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
     private TextView mNameView;
 
     private  EditText mNameField;
@@ -76,6 +82,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser() == null) {
+                    Intent loginIntent = new Intent(MainActivity.this,RetrieveActivity.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // prevents the user from going back to the page
+                    startActivity(loginIntent);
+
+                }
+            }
+        };
+
+
+
+
         switchBtn = (Button) findViewById(R.id.switch_button);
         mFirebaseBtn = (Button) findViewById(R.id.firebase_btn);
         mDatabase = FirebaseDatabase.getInstance().getReference(); // this points to the root of the database
@@ -84,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
         mNameField = (EditText) findViewById(R.id.name_field);
         mEmailField = (EditText) findViewById(R.id.email_field);
+
 
 //        editText_2 = (EditText) findViewById(R.id.editText2);
 
@@ -145,6 +169,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
 

@@ -42,8 +42,8 @@ public class RetrieveActivity extends AppCompatActivity {
 
             @Override // this will be retrieving the value
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String name = dataSnapshot.getValue().toString();
-                first_textView.setText("Name: " + name);
+                //String name = dataSnapshot.getValue().toString();
+               // first_textView.setText("Name: " + name);
             }
 
             @Override // this will be getting error
