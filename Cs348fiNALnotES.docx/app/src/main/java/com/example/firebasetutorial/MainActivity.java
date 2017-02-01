@@ -111,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.removeValue();
 
 //        editText_2 = (EditText) findViewById(R.id.editText2);
 
@@ -168,9 +170,12 @@ public class MainActivity extends AppCompatActivity {
                         // System.out.println("the user id is " + user_id);
 
                         String user_id = mAuth.getCurrentUser().getUid();
-                        User user1 = new User(user_id,name);
+                        UserStuff stuff = new UserStuff(name);
+                        User user = new User(user_id);
+
+
                         //user1.set_profile(user_id,name);
-                        mDatabase.setValue(user1);
+                        mDatabase.child("Users").child(user_id).setValue(stuff);
                         mProgress.dismiss();
                         Intent mainIntent = new Intent(MainActivity.this, RetrieveActivity.class);
                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -215,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
+            mAuth.signOut();
         }
     }
 

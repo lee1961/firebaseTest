@@ -40,11 +40,26 @@ public class RetrieveActivity extends AppCompatActivity {
         button = (Button) findViewById(R.id.button2);
 
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("level1").child("level2").child("level3");
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
         if(user != null) {
-            first_textView.setText("hello !");
+            first_textView.setText("Hello " + user.getUid());
         }
+
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserStuff u = dataSnapshot.getValue(UserStuff.class);
+                first_textView.setText("Hello " + u.name);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
 
         mDatabase.addValueEventListener(new ValueEventListener() {
 
@@ -53,6 +68,9 @@ public class RetrieveActivity extends AppCompatActivity {
 
                 //String name = dataSnapshot.getValue().toString();
                // first_textView.setText("Name: " + name);
+                UserStuff u = dataSnapshot.getValue(UserStuff.class);
+                first_textView.setText(u.name);
+
             }
 
             @Override // this will be getting error
@@ -63,7 +81,7 @@ public class RetrieveActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                FirebaseAuth.getInstance().signOut();
             }
         });
 
