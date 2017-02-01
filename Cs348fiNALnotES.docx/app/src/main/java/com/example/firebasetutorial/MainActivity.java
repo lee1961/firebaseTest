@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mNameView;
 
-    private  EditText mNameField;
+    private EditText mNameField;
     private EditText mEmailField;
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
@@ -67,21 +67,16 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 //
-//        switchBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //startActivity();
-//                switch_activity();
-//                //System.out.println("asd");
-//            }
-//        });
-//
+
+
+    //
 //
 //    }
     public void switch_activity() {
-        Intent intent = new Intent(this,RetrieveActivity.class);
+        Intent intent = new Intent(this, RetrieveActivity.class);
         startActivity(intent);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,12 +86,11 @@ public class MainActivity extends AppCompatActivity {
         mProgress = new ProgressDialog(this);
 
 
-
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() == null) {
-                    Intent loginIntent = new Intent(MainActivity.this,RetrieveActivity.class);
+                if (firebaseAuth.getCurrentUser() != null) {
+                    Intent loginIntent = new Intent(MainActivity.this, RetrieveActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // prevents the user from going back to the page
                     startActivity(loginIntent);
 
@@ -105,18 +99,15 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-
-
         switchBtn = (Button) findViewById(R.id.switch_button);
         mFirebaseBtn = (Button) findViewById(R.id.firebase_btn);
-        mDatabase = FirebaseDatabase.getInstance().getReference(); // this points to the root of the database
-       // editText = (EditText) findViewById(R.id.editText);
+        //  mDatabase = FirebaseDatabase.getInstance().getReference(); // this points to the root of the database
+        // editText = (EditText) findViewById(R.id.editText);
         //\\//textView = (TextView) findViewById(R.id.textView);
 
         mNameField = (EditText) findViewById(R.id.name_field);
         mEmailField = (EditText) findViewById(R.id.email_field);
         mPasswordField = (EditText) findViewById(R.id.password_field);
-
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -134,38 +125,59 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //startActivity();
-                switch_activity();
+                //switch_activity();
                 //System.out.println("asd");
+                String name = mNameField.getText().toString();
+                String email = mEmailField.getText().toString();
+                mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child("User").setValue(name);
+                System.out.println("asdas");
+
             }
         });
 
     }
+
     public void onSubmit(View view) {
         startRegister();
     }
-    public void startRegister() {
-        final String name = mNameField.getText().toString().trim();
-        String email = mEmailField.getText().toString().trim();
-        String password = mPasswordField.getText().toString().trim();
 
-        if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users"); // to point at users
+    public void startRegister() {
+       // final String name = mNameField.getText().toString().trim();
+//        String email = mEmailField.getText().toString().trim();
+//        String password = mPasswordField.getText().toString().trim();
+        final String name = "Victor";
+        String email = "victorlee_1995@hotmail.com";
+        String password = "abcdefg";
+
+        if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+            mDatabase = FirebaseDatabase.getInstance().getReference(); // to point at users
             mProgress.setMessage("Signing up...");
             mProgress.show();
-            mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful()) {
+                    if (task.isSuccessful()) {
                         // once successfully signed up
                         // it is in sign in mode so retrieve id
-                        String user_id = mAuth.getCurrentUser().getUid(); // to get the uniqueid
-                        DatabaseReference current_user_db =  mDatabase.child(user_id);
-                        current_user_db.child("name").setValue(name);
-                        current_user_db.child("image").setValue("default");
+
+                        //String user_id = mAuth.getCurrentUser().getUid(); // to get the uniqueid
+                        //DatabaseReference current_user_db = mDatabase.child(user_id);
+                        //current_user_db.child("name").setValue(name);
+                        //current_user_db.child("image").setValue("default");
+                        // System.out.println("the user id is " + user_id);
+
+                        String user_id = mAuth.getCurrentUser().getUid();
+                        User user1 = new User(user_id,name);
+                        //user1.set_profile(user_id,name);
+                        mDatabase.setValue(user1);
                         mProgress.dismiss();
-                        Intent mainIntent = new Intent(MainActivity.this,RetrieveActivity.class);
+                        Intent mainIntent = new Intent(MainActivity.this, RetrieveActivity.class);
                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(mainIntent );
+                        startActivity(mainIntent);
+                    } else {
+                        mProgress.dismiss();
+                        Toast.makeText(MainActivity.this, "ALready registed", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -173,8 +185,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-//    public void onSubmit(View view) {
+    //    public void onSubmit(View view) {
 //        mDatabase = FirebaseDatabase.getInstance().getReference();
 //        System.out.println(mDatabase.toString());
 //        String text1 = mNameField.getText().toString();
@@ -197,9 +208,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-       // mAuth.addAuthStateListener(mAuthListener);
+        mAuth.addAuthStateListener(mAuthListener);
     }
-
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
 
 
 //    public void displayValue(String string) {
@@ -219,9 +236,6 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 //    }
-
-
-
 
 
 }
