@@ -42,17 +42,29 @@ public class RetrieveActivity extends AppCompatActivity {
 
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
+        //mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
         if(user != null) {
             first_textView.setText("Hello " + user.getUid());
         }
+//        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                UserStuff u = dataSnapshot.getValue(UserStuff.class);
+//                second_textView.setText("now u will only retrieve the name " + u.getName());
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                UserStuff u = dataSnapshot.getValue(UserStuff.class);
-                first_textView.setText("Hello " + u.name);
+//                UserStuff u = dataSnapshot.getValue(UserStuff.class);
+//                first_textView.setText("Hello " + u.name);
             }
 
             @Override
@@ -61,23 +73,23 @@ public class RetrieveActivity extends AppCompatActivity {
             }
         };
 
-        mDatabase.addValueEventListener(new ValueEventListener() {
-
-            @Override // this will be retrieving the value
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                //String name = dataSnapshot.getValue().toString();
-               // first_textView.setText("Name: " + name);
-                UserStuff u = dataSnapshot.getValue(UserStuff.class);
-                first_textView.setText(u.name);
-
-            }
-
-            @Override // this will be getting error
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        mDatabase.addValueEventListener(new ValueEventListener() {
+//
+//            @Override // this will be retrieving the value
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                //String name = dataSnapshot.getValue().toString();
+//               // first_textView.setText("Name: " + name);
+//                UserStuff u = dataSnapshot.getValue(UserStuff.class);
+//                first_textView.setText(u.name);
+//
+//            }
+//
+//            @Override // this will be getting error
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

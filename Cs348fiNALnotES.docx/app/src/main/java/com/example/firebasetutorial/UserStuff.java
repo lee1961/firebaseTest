@@ -17,7 +17,8 @@ public class UserStuff extends User{
     }
     public UserStuff(String name) {
         this.name = name;
-
+        this.taken_quizID = null;
+        this.created_quizID = null;
     }
 
     public String getName() {
