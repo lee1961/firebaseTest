@@ -25,6 +25,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -171,11 +173,19 @@ public class MainActivity extends AppCompatActivity {
 
                         String user_id = mAuth.getCurrentUser().getUid();
                         UserStuff stuff = new UserStuff(name);
-                        User user = new User(user_id);
+                        //User user = new User(user_id);
 
 
                         //user1.set_profile(user_id,name);
+
+                        stuff.created_quizID.add("abcde");
+                        stuff.created_quizID.add("zxc");
+                        stuff.created_quizID.add("sads");
+                        stuff.taken_quizID.add("dcfeg");
+                        stuff.taken_quizID.add("aaaaa");
                         mDatabase.child("Users").child(user_id).setValue(stuff);
+
+
                         mProgress.dismiss();
                         Intent mainIntent = new Intent(MainActivity.this, RetrieveActivity.class);
                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

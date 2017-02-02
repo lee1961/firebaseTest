@@ -63,6 +63,7 @@ public class RetrieveActivity extends AppCompatActivity {
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                
 //                UserStuff u = dataSnapshot.getValue(UserStuff.class);
 //                first_textView.setText("Hello " + u.name);
             }
